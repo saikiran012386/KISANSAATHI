@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --earth: #2D5016;
+    --leaf: #4A8C1C;
+    --sprout: #7BBD3F;
+    --sun: #F5A623;
+    --soil: #8B5E3C;
+    --sky: #3B82C4;
+    --cream: #FBF7EE;
+    --ivory: #F0EAD6;
+    --text: #1E2C0A;
+    --muted: #6B7A5A;
+    --white: #FFFFFF;
+    --danger: #D94F3B;
+    --badge: #E8F5D0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .brand {
+    font-family: 'Baloo 2', cursive;
+  }
+
+  /* ── TOP NAV ── */
+  .topbar {
+    background: linear-gradient(135deg, var(--earth) 0%, var(--leaf) 100%);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 3px 12px rgba(0,0,0,.25);
+  }
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-icon {
+    width: 38px; height: 38px;
+    background: var(--sun);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 2px 8px rgba(245,166,35,.5);
+  }
+  .brand-text {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .5px;
+  }
+  .brand-text span { color: var(--sun); }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .lang-btn {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Noto Sans', sans-serif;
+    transition: background .2s;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,.25); }
+  .points-badge {
+    background: var(--sun);
+    color: var(--earth);
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ── WEATHER STRIP ── */
+  .weather-strip {
+    background: linear-gradient(90deg, #1a6ea5 0%, #3B82C4 50%, #5ba3d9 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 16px;
+  }
+  .weather-strip::-webkit-scrollbar { display: none; }
+  .weather-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 16px;
+    border-right: 1px solid rgba(255,255,255,.2);
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  .weather-item:last-child { border-right: none; }
+  .weather-item .wi { font-size: 20px; }
+  .alert-banner {
+    background: #fff3cd;
+    border-bottom: 2px solid var(--sun);
+    padding: 7px 16px;
+    font-size: 13px;
+    color: #7a5800;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .alert-banner .pulse-dot {
+    width: 8px; height: 8px;
+    background: var(--danger);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(1.4); }
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .app-layout {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── ONBOARDING ── */
+  .onboard-hero {
+    background: linear-gradient(160deg, var(--earth) 0%, var(--leaf) 60%, var(--sprout) 100%);
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .onboard-hero::before {
+    content: '';
+    position: absolute; bottom: -20px; left: -20px; right: -20px;
+    height: 60px;
+    background: var(--cream);
+    border-radius: 50% 50% 0 0;
+  }
+  .hero-emoji {
+    font-size: 64px;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.3));
+    animation: floatEmoji 3s ease-in-out infinite;
+  }
+  @keyframes floatEmoji {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .hero-title {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 800;
+  }
+  .hero-sub {
+    color: rgba(255,255,255,.85);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .form-card {
+    background: #fff;
+    margin: 20px 16px;
+    border-radius: 18px;
+    padding: 22px 20px;
+    box-shadow: 0 4px 20px rgba(45,80,22,.1);
+  }
+  .form-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--earth);
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--ivory);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Noto Sans', sans-serif;
+    color: var(--text);
+    background: var(--cream);
+    transition: border .2s;
+    -webkit-appearance: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--sprout);
+  }
+
+  /* Chip selects */
+  .chip-group {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .chip {
+    padding: 8px 14px;
+    border: 2px solid var(--ivory);
+    border-radius: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    background: #fff;
+    transition: all .2s;
+    user-select: none;
+  }
+  .chip.selected {
+    background: var(--earth);
+    border-color: var(--earth);
+    color: #fff;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--earth), var(--leaf));
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 700;
+    font-family: 'Baloo 2', cursive;
+    cursor: pointer;
+    letter-spacing: .5px;
+    box-shadow: 0 4px 15px rgba(74,140,28,.35);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-primary:active {
+    transform: scale(.97);
+    box-shadow: 0 2px 8px rgba(74,140,28,.2);
+  }
+
+  /* ── DASHBOARD ── */
+  .greeting-bar {
+    background: linear-gradient(135deg, var(--earth) 0%, var(--leaf) 100%);
+    padding: 18px 20px 22px;
+    color: #fff;
+  }
+  .greeting-name {
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .greeting-sub {
+    font-size: 13px;
+    opacity: .85;
+    margin-top: 3px;
+  }
+  .greeting-meta {
+    display: flex; gap: 12px; margin-top: 10px;
+  }
+  .meta-tag {
+    background: rgba(255,255,255,.18);
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* Quick Actions */
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--earth);
+    padding: 18px 16px 10px;
+  }
+  .quick-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 16px;
+  }
+  .quick-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 14px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  .quick-card:hover, .quick-card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    border-color: var(--sprout);
+  }
+  .quick-card .qc-icon {
+    font-size: 38px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .quick-card .qc-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .quick-card .qc-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .quick-card.highlight {
+    background: linear-gradient(135deg, var(--earth), var(--leaf));
+    color: #fff;
+  }
+  .quick-card.highlight .qc-label,
+  .quick-card.highlight .qc-sub { color: rgba(255,255,255,.9); }
+
+  /* Crop calendar */
+  .calendar-strip {
+    padding: 0 16px 12px;
+    overflow-x: auto;
+    display: flex;
+    gap: 10px;
+    scrollbar-width: none;
+  }
+  .calendar-strip::-webkit-scrollbar { display: none; }
+  .cal-day {
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px 12px;
+    text-align: center;
+    min-width: 70px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    border: 2px solid transparent;
+  }
+  .cal-day.today {
+    border-color: var(--sprout);
+    background: var(--badge);
+  }
+  .cal-day .cd-date { font-size: 18px; font-weight: 700; color: var(--earth); }
+  .cal-day .cd-day { font-size: 11px; color: var(--muted); }
+  .cal-day .cd-task { font-size: 11px; color: var(--leaf); margin-top: 4px; font-weight: 600; }
+
+  /* Tip cards */
+  .tip-scroll {
+    display: flex; gap: 12px;
+    padding: 0 16px 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tip-scroll::-webkit-scrollbar { display: none; }
+  .tip-card {
+    flex-shrink: 0;
+    width: 210px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    border-left: 4px solid var(--sprout);
+  }
+  .tip-card.warning { border-left-color: var(--sun); }
+  .tip-card.danger { border-left-color: var(--danger); }
+  .tip-card .tc-emoji { font-size: 28px; margin-bottom: 8px; }
+  .tip-card .tc-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .tip-card .tc-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CHAT / ASK SCREEN ── */
+  .chat-header {
+    background: linear-gradient(135deg, var(--earth), var(--leaf));
+    padding: 14px 16px;
+    color: #fff;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .back-btn {
+    background: rgba(255,255,255,.2);
+    border: none;
+    color: #fff;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chat-header-title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .chat-header-sub {
+    font-size: 12px;
+    opacity: .8;
+  }
+
+  .chat-body {
+    height: calc(100vh - 58px - 140px);
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .msg {
+    max-width: 88%;
+    padding: 12px 15px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .msg.bot {
+    background: #fff;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    align-self: flex-start;
+  }
+  .msg.user {
+    background: linear-gradient(135deg, var(--earth), var(--leaf));
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+  .msg-avatar {
+    width: 28px; height: 28px;
+    background: var(--sun);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .typing-dots {
+    display: flex; gap: 4px; align-items: center; padding: 4px 0;
+  }
+  .typing-dots span {
+    width: 7px; height: 7px;
+    background: var(--muted);
+    border-radius: 50%;
+    animation: dot 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: .2s; }
+  .typing-dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes dot {
+    0%,80%,100% { transform: scale(1); opacity: .5; }
+    40% { transform: scale(1.3); opacity: 1; }
+  }
+
+  .chat-input-area {
+    background: #fff;
+    border-top: 1px solid var(--ivory);
+    padding: 10px 12px;
+  }
+  .upload-preview {
+    display: none;
+    background: var(--badge);
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--earth);
+    align-items: center;
+    gap: 8px;
+  }
+  .upload-preview.show { display: flex; }
+  .chat-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .chat-input {
+    flex: 1;
+    padding: 11px 14px;
+    border: 2px solid var(--ivory);
+    border-radius: 25px;
+    font-size: 14px;
+    font-family: 'Noto Sans', sans-serif;
+    outline: none;
+    transition: border .2s;
+  }
+  .chat-input:focus { border-color: var(--sprout); }
+  .icon-btn {
+    width: 42px; height: 42px;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .15s;
+  }
+  .icon-btn:active { transform: scale(.9); }
+  .btn-upload { background: var(--ivory); color: var(--earth); }
+  .btn-send { background: var(--leaf); color: #fff; }
+  .btn-mic { background: var(--ivory); color: var(--earth); }
+
+  /* Suggestion chips */
+  .suggest-chips {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    margin-bottom: 8px;
+  }
+  .suggest-chips::-webkit-scrollbar { display: none; }
+  .s-chip {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    background: var(--badge);
+    border: 1px solid var(--sprout);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--earth);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background .2s;
+  }
+  .s-chip:active { background: var(--earth); color: #fff; }
+
+  /* ── DISEASE DETECT ── */
+  .detect-body {
+    padding: 20px 16px;
+  }
+  .upload-zone {
+    border: 3px dashed var(--sprout);
+    border-radius: 20px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--badge);
+    transition: background .2s;
+    position: relative;
+  }
+  .upload-zone:hover { background: #d8f0b0; }
+  .upload-zone input[type=file] {
+    position: absolute; inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .upload-zone .uz-icon { font-size: 52px; margin-bottom: 12px; }
+  .upload-zone .uz-text { font-size: 16px; font-weight: 700; color: var(--earth); }
+  .upload-zone .uz-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .detected-result {
+    display: none;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+    margin-top: 16px;
+  }
+  .detected-result.show { display: block; }
+  .result-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .result-icon { font-size: 40px; }
+  .result-name { font-size: 18px; font-weight: 700; color: var(--danger); }
+  .result-conf { font-size: 13px; color: var(--muted); }
+  .severity-bar {
+    height: 8px;
+    background: var(--ivory);
+    border-radius: 4px;
+    margin: 8px 0 14px;
+    overflow: hidden;
+  }
+  .severity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sun), var(--danger));
+    border-radius: 4px;
+    width: 0;
+    transition: width 1s ease;
+  }
+  .solution-steps {
+    margin-top: 10px;
+  }
+  .step-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ivory);
+  }
+  .step-item:last-child { border-bottom: none; }
+  .step-num {
+    width: 26px; height: 26px;
+    background: var(--earth);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 14px; line-height: 1.5; }
+
+  /* ── STORES ── */
+  .stores-body { padding: 16px; }
+  .store-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    margin-bottom: 12px;
+    display: flex; gap: 14px;
+    align-items: flex-start;
+  }
+  .store-icon-box {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--badge);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .store-name { font-size: 15px; font-weight: 700; }
+  .store-type { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .store-dist {
+    font-size: 12px;
+    color: var(--sky);
+    font-weight: 600;
+    margin-top: 6px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .store-hours {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .open-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #e6f9e6;
+    color: #1a7a1a;
+    margin-left: 6px;
+  }
+  .closed-badge {
+    background: #fde8e6;
+    color: var(--danger);
+  }
+  .call-store-btn {
+    margin-top: 8px;
+    display: flex; gap: 8px;
+  }
+  .sm-btn {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: 'Noto Sans', sans-serif;
+  }
+  .sm-btn.green { background: var(--leaf); color: #fff; }
+  .sm-btn.outline { background: transparent; border: 1.5px solid var(--leaf); color: var(--leaf); }
+
+  /* ── QUIZ ── */
+  .quiz-body { padding: 20px 16px; }
+  .quiz-card {
+    background: linear-gradient(135deg, #1e3c0f, var(--earth));
+    border-radius: 22px;
+    padding: 24px 20px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .quiz-card::before {
+    content: '🌾';
+    position: absolute;
+    font-size: 90px;
+    right: -10px; top: -10px;
+    opacity: .15;
+  }
+  .quiz-question {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .quiz-pts {
+    font-size: 13px;
+    opacity: .8;
+    margin-bottom: 18px;
+  }
+  .quiz-options {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .q-option {
+    background: rgba(255,255,255,.12);
+    border: 1.5px solid rgba(255,255,255,.25);
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Noto Sans', sans-serif;
+    transition: background .2s;
+  }
+  .q-option:hover { background: rgba(255,255,255,.22); }
+  .q-option.correct { background: rgba(122,189,63,.5); border-color: var(--sprout); }
+  .q-option.wrong { background: rgba(217,79,59,.4); border-color: var(--danger); }
+
+  .points-display {
+    background: #fff;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+  }
+  .pts-big {
+    font-size: 52px;
+    font-weight: 800;
+    color: var(--sun);
+    font-family: 'Baloo 2', cursive;
+  }
+  .pts-label { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .reward-list {
+    margin-top: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .reward-item {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px;
+  }
+  .reward-item .ri-icon { font-size: 26px; }
+  .reward-item .ri-name { font-weight: 600; }
+  .reward-item .ri-pts { font-size: 12px; color: var(--muted); }
+  .reward-item .ri-action {
+    margin-left: auto;
+    padding: 6px 12px;
+    background: var(--earth);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* ── PROFILE / HISTORY ── */
+  .profile-body { padding: 16px; }
+  .profile-hero {
+    background: linear-gradient(135deg, var(--earth), var(--leaf));
+    border-radius: 22px;
+    padding: 24px;
+    color: #fff;
+    display: flex; gap: 16px;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .avatar-circle {
+    width: 64px; height: 64px;
+    background: var(--sun);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    flex-shrink: 0;
+  }
+  .profile-name { font-size: 20px; font-weight: 800; }
+  .profile-loc { font-size: 13px; opacity: .85; margin-top: 3px; }
+  .profile-stats {
+    display: flex; gap: 0;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    margin-bottom: 18px;
+  }
+  .pstat {
+    flex: 1;
+    text-align: center;
+    padding: 14px 8px;
+    border-right: 1px solid var(--ivory);
+  }
+  .pstat:last-child { border-right: none; }
+  .pstat .ps-val { font-size: 22px; font-weight: 800; color: var(--earth); font-family: 'Baloo 2', cursive; }
+  .pstat .ps-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .history-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    margin-bottom: 10px;
+    border-left: 4px solid var(--sprout);
+    cursor: pointer;
+  }
+  .history-item .hi-date { font-size: 11px; color: var(--muted); }
+  .history-item .hi-q { font-size: 14px; font-weight: 600; margin: 4px 0; }
+  .history-item .hi-ans { font-size: 12px; color: var(--muted); }
+  .status-tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 8px;
+  }
+  .solved { background: #e6f9e6; color: #1a7a1a; }
+  .pending { background: #fff3cd; color: #7a5800; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    border-top: 1px solid var(--ivory);
+    display: flex;
+    box-shadow: 0 -4px 20px rgba(0,0,0,.1);
+    z-index: 998;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px 10px;
+    cursor: pointer;
+    transition: color .2s;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+  }
+  .nav-item .ni-icon { font-size: 22px; margin-bottom: 2px; }
+  .nav-item.active { color: var(--earth); }
+  .nav-item.active .ni-icon { filter: drop-shadow(0 1px 3px rgba(45,80,22,.3)); }
+  .nav-center-btn {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    border: none;
+    background: transparent;
+  }
+  .nav-center-inner {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--earth), var(--leaf));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 14px rgba(74,140,28,.4);
+    position: absolute;
+    top: -14px;
+    border: 3px solid #fff;
+  }
+  .nav-center-label {
+    margin-top: 30px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--earth);
+  }
+
+  /* ── CALL SUPPORT ── */
+  .support-banner {
+    background: linear-gradient(135deg, #0a4a8a, var(--sky));
+    border-radius: 18px;
+    padding: 18px 20px;
+    color: #fff;
+    margin: 0 16px 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .support-icon { font-size: 38px; }
+  .support-title { font-size: 16px; font-weight: 700; }
+  .support-hrs { font-size: 13px; opacity: .85; margin-top: 3px; }
+  .support-btn {
+    margin-left: auto;
+    padding: 10px 16px;
+    background: #fff;
+    color: var(--sky);
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'Noto Sans', sans-serif;
+  }
+
+  /* Spacing below fixed bottom nav */
+  .screen-pad-bottom { padding-bottom: 80px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--earth);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    opacity: 0;
+    transition: all .3s;
+    z-index: 9999;
+    white-space: nowrap;
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Knowledge card */
+  .knowledge-card {
+    background: linear-gradient(135deg, #fff7e6, #fffbf2);
+    border: 2px solid var(--sun);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 16px 12px;
+  }
+  .kc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .kc-badge { background: var(--sun); color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .kc-title { font-size: 15px; font-weight: 700; }
+  .kc-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* Loading shimmer */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+
+  /* ── LANGUAGE TOGGLE ── */
+  .lang-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--ivory);
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+  }
+  .lang-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+  }
+  .lang-tab.active {
+    color: var(--earth);
+    border-bottom-color: var(--sprout);
+  }
+
+  @media (max-width: 380px) {
+    .quick-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .quick-card { padding: 14px 10px; }
+    .quick-card .qc-icon { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- TOP NAV -->
+<div class="topbar">
+  <div class="brand-logo">
+    <div class="brand-icon">🌱</div>
+    <span class="brand-text">Kisaan<span>Sathi</span></span>
+  </div>
+  <div class="topbar-right">
+    <button class="lang-btn" onclick="cycleLang()">🌐 <span id="langLabel">EN</span></button>
+    <div class="points-badge" onclick="showScreen('quiz')">⭐ <span id="topPoints">0</span></div>
+  </div>
+</div>
+
+<!-- WEATHER STRIP -->
+<div class="weather-strip" id="weatherStrip">
+  <div class="weather-item"><span class="wi">☀️</span><div><div>Hyderabad</div><div style="font-size:11px;opacity:.8">34°C</div></div></div>
+  <div class="weather-item"><span class="wi">💧</span><div><div>Humidity</div><div style="font-size:11px;opacity:.8">68%</div></div></div>
+  <div class="weather-item"><span class="wi">🌬️</span><div><div>Wind</div><div style="font-size:11px;opacity:.8">14 km/h</div></div></div>
+  <div class="weather-item"><span class="wi">🌧️</span><div><div>Rain (3d)</div><div style="font-size:11px;opacity:.8">40% chance</div></div></div>
+  <div class="weather-item"><span class="wi">🌡️</span><div><div>Min/Max</div><div style="font-size:11px;opacity:.8">26 / 36°C</div></div></div>
+</div>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner">
+  <div class="pulse-dot"></div>
+  <span id="alertText">⚠️ Aphid outbreak alert in your region – Check pest control tips</span>
+</div>
+
+<!-- APP CONTENT -->
+<div class="app-layout" id="appLayout">
+
+  <!-- ── ONBOARDING SCREEN ── -->
+  <div class="screen active" id="screen-onboard">
+    <div class="onboard-hero">
+      <div class="hero-emoji">👨‍🌾</div>
+      <h1 class="hero-title">Namaste Kisaan!</h1>
+      <p class="hero-sub">Your smart farming companion – let's set up your profile</p>
+    </div>
+
+    <div class="lang-bar">
+      <div class="lang-tab active" onclick="selectLang('en', this)">English</div>
+      <div class="lang-tab" onclick="selectLang('hi', this)">हिंदी</div>
+      <div class="lang-tab" onclick="selectLang('te', this)">తెలుగు</div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-title">📋 Your Farm Profile</div>
+
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="farmerName" placeholder="e.g. Ramesh Kumar" />
+      </div>
+
+      <div class="form-group">
+        <label>District / Location</label>
+        <input type="text" id="farmerLoc" placeholder="e.g. Warangal, Telangana" />
+      </div>
+
+      <div class="form-group">
+        <label>Land Size</label>
+        <select id="landSize">
+          <option value="">Select land size</option>
+          <option value="<1 acre">Less than 1 acre</option>
+          <option value="1–3 acres">1 – 3 acres</option>
+          <option value="3–5 acres">3 – 5 acres</option>
+          <option value="5–10 acres">5 – 10 acres</option>
+          <option value=">10 acres">More than 10 acres</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Main Crop</label>
+        <div class="chip-group" id="cropChips">
+          <div class="chip" onclick="toggleChip(this,'crop')">🌾 Rice</div>
+          <div class="chip" onclick="toggleChip(this,'crop')">🌽 Maize</div>
+          <div class="chip" onclick="toggleChip(this,'crop')">🥜 Cotton</div>
+          <div class="chip" onclick="toggleChip(this,'crop')">🌶️ Chilli</div>
+          <div class="chip" onclick="toggleChip(this,'crop')">🧅 Onion</div>
+          <div class="chip" onclick="toggleChip(this,'crop')">🫘 Soybean</div>
+          <div class="chip" onclick="toggleChip(this,'crop')">🍅 Tomato</div>
+          <div class="chip" onclick="toggleChip(this,'crop')">🌱 Other</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Current Season</label>
+        <div class="chip-group" id="seasonChips">
+          <div class="chip" onclick="toggleChip(this,'season')">☀️ Kharif</div>
+          <div class="chip" onclick="toggleChip(this,'season')">❄️ Rabi</div>
+          <div class="chip" onclick="toggleChip(this,'season')">🌸 Zaid</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="saveProfile()">🚀 Start My Journey</button>
+    </div>
+  </div>
+
+  <!-- ── HOME DASHBOARD ── -->
+  <div class="screen screen-pad-bottom" id="screen-home">
+
+    <div class="greeting-bar">
+      <div class="greeting-name">
+  👋 Hello, {{ name }}!
+</div>
+
+      <div class="greeting-sub" id="greetSub">Your crops are waiting for attention today</div>
+      <div class="greeting-meta">
+        <div class="meta-tag">📍 <span id="metaLoc">–</span></div>
+        <div class="meta-tag">🌱 <span id="metaCrop">–</span></div>
+        <div class="meta-tag">🏡 <span id="metaLand">–</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">📅 Crop Calendar This Week</div>
+    <div class="calendar-strip" id="calendarStrip"></div>
+
+    <div class="section-title">⚡ Quick Actions</div>
+    <div class="quick-grid">
+      <div class="quick-card highlight" onclick="showScreen('ask')">
+        <span class="qc-icon">🤖</span>
+        <div class="qc-label">Ask Expert</div>
+        <div class="qc-sub">Get instant advice</div>
+      </div>
+      <div class="quick-card" onclick="showScreen('detect')">
+        <span class="qc-icon">🔬</span>
+        <div class="qc-label">Detect Disease</div>
+        <div class="qc-sub">Upload crop photo</div>
+      </div>
+      <div class="quick-card" onclick="showScreen('stores')">
+        <span class="qc-icon">🏪</span>
+        <div class="qc-label">Nearby Stores</div>
+        <div class="qc-sub">Agri input centers</div>
+      </div>
+      <div class="quick-card" onclick="showScreen('quiz')">
+        <span class="qc-icon">🎯</span>
+        <div class="qc-label">Daily Quiz</div>
+        <div class="qc-sub">Earn reward points</div>
+      </div>
+    </div>
+
+    <div class="section-title">💡 Today's Tips & Alerts</div>
+    <div class="tip-scroll">
+      <div class="tip-card warning">
+        <div class="tc-emoji">🐛</div>
+        <div class="tc-title">Aphid Alert</div>
+        <div class="tc-body">Spray neem oil solution (5ml/L) in early morning. Check undersides of leaves.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tc-emoji">💧</div>
+        <div class="tc-title">Irrigation Tip</div>
+        <div class="tc-body">With 40% rain forecast, reduce watering by 30% this week to prevent root rot.</div>
+      </div>
+      <div class="tip-card danger">
+        <div class="tc-emoji">🌡️</div>
+        <div class="tc-title">Heat Warning</div>
+        <div class="tc-body">Temperature above 35°C expected. Mulch your soil and water at dusk to reduce evaporation.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tc-emoji">🧪</div>
+        <div class="tc-title">Fertilizer</div>
+        <div class="tc-body">Best time for Urea top dressing – apply 20 kg/acre before next rain event.</div>
+      </div>
+    </div>
+
+    <div class="section-title">🤝 Community Knowledge</div>
+    <div class="knowledge-card">
+      <div class="kc-header">
+        <span class="kc-badge">SOLVED by Team</span>
+        <span class="kc-title">Yellow leaves on Rice</span>
+      </div>
+      <div class="kc-body">Iron deficiency identified in Warangal region. Apply FeSO₄ (ferrous sulfate) 2% spray. Reported by 12 farmers – solution confirmed effective by agronomist.</div>
+    </div>
+    <div class="knowledge-card">
+      <div class="kc-header">
+        <span class="kc-badge">SOLVED by Team</span>
+        <span class="kc-title">Cotton bollworm damage</span>
+      </div>
+      <div class="kc-body">Use pheromone traps @5/acre + Spinosad 45SC spray. 28 farmers in Adilabad district confirmed >80% reduction in 2 weeks.</div>
+    </div>
+
+    <!-- Support Banner -->
+    <div class="support-banner">
+      <div class="support-icon">📞</div>
+      <div>
+        <div class="support-title">Call Center Support</div>
+        <div class="support-hrs">Mon–Sat, 9 AM – 7 PM</div>
+      </div>
+      <button class="support-btn" onclick="callSupport()">📲 Call Now</button>
+    </div>
+
+  </div>
+
+  <!-- ── ASK EXPERT SCREEN ── -->
+  <div class="screen" id="screen-ask">
+    <div class="chat-header">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <div>
+        <div class="chat-header-title">🌿 Ask Expert</div>
+        <div class="chat-header-sub">AI + Agronomist supported</div>
+      </div>
+    </div>
+    <div class="lang-bar">
+      <div class="lang-tab active" onclick="selectLang('en',this)">English</div>
+      <div class="lang-tab" onclick="selectLang('hi',this)">हिंदी</div>
+      <div class="lang-tab" onclick="selectLang('te',this)">తెలుగు</div>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <!-- messages injected here -->
+    </div>
+    <div class="chat-input-area">
+      <div class="suggest-chips" id="suggestChips">
+        <div class="s-chip" onclick="sendSuggest('My crop leaves are turning yellow')">🍃 Yellow leaves</div>
+        <div class="s-chip" onclick="sendSuggest('How much water does my crop need this week?')">💧 Irrigation</div>
+        <div class="s-chip" onclick="sendSuggest('Best fertilizer for this season?')">🧪 Fertilizer</div>
+        <div class="s-chip" onclick="sendSuggest('I see insects on my crop')">🐛 Pest issue</div>
+        <div class="s-chip" onclick="sendSuggest('When should I harvest?')">🌾 Harvest time</div>
+      </div>
+      <div class="upload-preview" id="uploadPreview">
+        📸 Photo attached – describe the problem below
+        <span onclick="clearUpload()" style="margin-left:auto;cursor:pointer;font-size:16px;">✕</span>
+      </div>
+      <div class="chat-row">
+        <button class="icon-btn btn-mic" onclick="voiceInput()" title="Voice input">🎤</button>
+        <input class="chat-input" type="text" id="chatInput" placeholder="Type your question..." />
+        <label class="icon-btn btn-upload" title="Attach photo">
+          📷
+          <input type="file" accept="image/*" style="display:none" onchange="handleChatUpload(this)" />
+        </label>
+        <button class="icon-btn btn-send" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DISEASE DETECT ── -->
+  <div class="screen screen-pad-bottom" id="screen-detect">
+    <div class="chat-header">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <div>
+        <div class="chat-header-title">🔬 Disease Detection</div>
+        <div class="chat-header-sub">Upload crop photo for analysis</div>
+      </div>
+    </div>
+    <div class="detect-body">
+      <div class="upload-zone" id="detectUploadZone">
+        <input type="file" accept="image/*" onchange="analyzeDisease(this)" />
+        <div class="uz-icon">📸</div>
+        <div class="uz-text">Take or Upload Photo</div>
+        <div class="uz-sub">Supports JPG, PNG – max 10MB</div>
+      </div>
+
+      <div class="detected-result" id="detectedResult">
+        <div class="result-header">
+          <div class="result-icon" id="resIcon">🍃</div>
+          <div>
+            <div class="result-name" id="resName">–</div>
+            <div class="result-conf" id="resConf">Confidence: –</div>
+          </div>
+        </div>
+        <div>Severity Level</div>
+        <div class="severity-bar"><div class="severity-fill" id="sevFill"></div></div>
+        <div class="solution-steps" id="solutionSteps"></div>
+      </div>
+
+      <!-- Disease tips -->
+      <div style="margin-top:20px">
+        <div class="section-title" style="padding:0 0 10px">📚 Common Diseases Guide</div>
+        <div class="tip-card danger" style="width:100%;margin-bottom:12px">
+          <div class="tc-emoji">🍂</div>
+          <div class="tc-title">Blast Disease (Rice)</div>
+          <div class="tc-body">Grey-white spots on leaves/neck. Apply Tricyclazole 75WP @300g/acre. Remove crop debris after harvest.</div>
+        </div>
+        <div class="tip-card warning" style="width:100%;margin-bottom:12px">
+          <div class="tc-emoji">🟤</div>
+          <div class="tc-title">Brown Spot (Rice / Maize)</div>
+          <div class="tc-body">Oval brown spots. Apply Mancozeb 75WP @400g/200L water. Ensure proper potassium nutrition.</div>
+        </div>
+        <div class="tip-card" style="width:100%;margin-bottom:12px">
+          <div class="tc-emoji">🐛</div>
+          <div class="tc-title">Cotton Bollworm</div>
+          <div class="tc-body">Holes in bolls. Use Bt (Bacillus thuringiensis) spray + pheromone traps. Spray Emamectin 5SG @80g/acre.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NEARBY STORES ── -->
+  <div class="screen screen-pad-bottom" id="screen-stores">
+    <div class="chat-header">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <div>
+        <div class="chat-header-title">🏪 Nearby Agri Stores</div>
+        <div class="chat-header-sub" id="storeLocSub">Finding near your location…</div>
+      </div>
+    </div>
+    <div class="stores-body" id="storesList">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- ── QUIZ & REWARDS ── -->
+  <div class="screen screen-pad-bottom" id="screen-quiz">
+    <div class="chat-header">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <div>
+        <div class="chat-header-title">🎯 Daily Quiz & Rewards</div>
+        <div class="chat-header-sub">Earn points – get discounts!</div>
+      </div>
+    </div>
+    <div class="quiz-body">
+
+      <div class="points-display" style="margin-bottom:16px">
+        <div class="pts-big" id="bigPoints">0</div>
+        <div class="pts-label">Your Reward Points</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+          <div style="background:var(--badge);padding:6px 14px;border-radius:12px;font-size:13px;font-weight:600;color:var(--earth)">🏆 Questions: <span id="qCount">0</span></div>
+          <div style="background:#fff3cd;padding:6px 14px;border-radius:12px;font-size:13px;font-weight:600;color:#7a5800">🎖️ Streak: <span id="streak">0</span> days</div>
+        </div>
+      </div>
+
+      <div class="quiz-card" id="quizCard">
+        <div class="quiz-question" id="quizQ">Loading today's question…</div>
+        <div class="quiz-pts">⭐ Earn 10 points for correct answer</div>
+        <div class="quiz-options" id="quizOptions"></div>
+      </div>
+
+      <div class="section-title" style="padding:10px 0">🎁 Redeem Rewards</div>
+      <div class="reward-list">
+        <div class="reward-item">
+          <div class="ri-icon">🧪</div>
+          <div>
+            <div class="ri-name">10% off – Fertilizers</div>
+            <div class="ri-pts">Shree Agro Store, Warangal</div>
+          </div>
+          <button class="ri-action" onclick="redeemReward(50,'10% off Fertilizers')">50 pts</button>
+        </div>
+        <div class="reward-item">
+          <div class="ri-icon">🌱</div>
+          <div>
+            <div class="ri-name">Seeds Discount 15%</div>
+            <div class="ri-pts">Kisaan Bhandar, Karimnagar</div>
+          </div>
+          <button class="ri-action" onclick="redeemReward(80,'Seeds 15% off')">80 pts</button>
+        </div>
+        <div class="reward-item">
+          <div class="ri-icon">💧</div>
+          <div>
+            <div class="ri-name">Free Soil Test</div>
+            <div class="ri-pts">Govt. Agriculture Center</div>
+          </div>
+          <button class="ri-action" onclick="redeemReward(100,'Free Soil Test')">100 pts</button>
+        </div>
+        <div class="reward-item">
+          <div class="ri-icon">🚿</div>
+          <div>
+            <div class="ri-name">20% off Pesticides</div>
+            <div class="ri-pts">Rythu Seva Kendra, Nalgonda</div>
+          </div>
+          <button class="ri-action" onclick="redeemReward(120,'20% off Pesticides')">120 pts</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- ── PROFILE / HISTORY ── -->
+<div class="screen screen-pad-bottom" id="screen-profile">
+  <div class="chat-header">
+    <button class="back-btn" onclick="showScreen('home')">←</button>
+    <div>
+      <div class="chat-header-title">👤 My Profile & History</div>
+      <div class="chat-header-sub">Your farming journey</div>
+    </div>
+  </div>
+
+  <div class="profile-body">
+
+    <div class="profile-hero">
+      <div class="avatar-circle">👨‍🌾</div>
+      <div>
+        <div class="profile-name">{{ name }}</div>
+        <div class="profile-loc" id="profLoc">📍 –</div>
+        <div style="font-size:12px;opacity:.8;margin-top:4px" id="profCrop">🌱 –</div>
+      </div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="pstat">
+        <div class="ps-val" id="statQuestions">0</div>
+        <div class="ps-lbl">Questions Asked</div>
+      </div>
+      <div class="pstat">
+        <div class="ps-val" id="statSolved">0</div>
+        <div class="ps-lbl">Issues Solved</div>
+      </div>
+      <div class="pstat">
+        <div class="ps-val" id="statPts">0</div>
+        <div class="ps-lbl">Points Earned</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="padding:0 0 10px">
+      📚 My Question History
+    </div>
+
+    <div id="historyList">
+      <!-- injected -->
+    </div>
+
+    <!-- EDIT PROFILE -->
+   <button class="btn-primary" style="margin-top:12px" onclick="editProfile()">✏️ Edit Profile</button>
+
+
+
+    <!-- LOGOUT -->
+    <button 
+      class="btn-primary" 
+      style="margin-top:12px;background:#D94F3B"
+      onclick="logoutUser()"
+    >
+      🚪 Logout
+    </button>
+
+  </div>
+</div>
+
+</div>
+
+<!-- end appLayout -->
+
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottomNav" style="display:none">
+  <button class="nav-item active" id="nav-home" onclick="showScreen('home')">
+    <span class="ni-icon">🏠</span>Home
+  </button>
+  <button class="nav-item" id="nav-detect" onclick="showScreen('detect')">
+    <span class="ni-icon">🔬</span>Scan
+  </button>
+  <button class="nav-center-btn" onclick="showScreen('ask')">
+    <div class="nav-center-inner">🤖</div>
+    <div class="nav-center-label">Ask</div>
+  </button>
+  <button class="nav-item" id="nav-stores" onclick="showScreen('stores')">
+    <span class="ni-icon">🏪</span>Stores
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="showScreen('profile')">
+    <span class="ni-icon">👤</span>Profile
+  </button>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//   APP STATE
+// ─────────────────────────────────────────────
+const state = {
+  lang: 'en',
+  name: '',
+  location: '',
+  crop: '',
+  land: '',
+  season: '',
+  points: 0,
+  questions: 0,
+  solved: 0,
+  streak: 0,
+  qAnswered: false,
+  history: [],
+  chatMessages: []
+};
+
+// ─────────────────────────────────────────────
+//   LANGUAGE SYSTEM
+// ─────────────────────────────────────────────
+const langs = {
+  en: {
+    greeting: 'Your crops are waiting for attention today',
+    askPlaceholder: 'Type your question...',
+    botGreet: "Hello! I'm your smart farming assistant 🌿 How can I help you today? You can ask about crop care, pests, fertilizers, or upload a photo!",
+    alertText: '⚠️ Aphid outbreak alert in your region – Check pest control tips'
+  },
+  hi: {
+    greeting: 'आज आपकी फसल पर ध्यान दें',
+    askPlaceholder: 'अपना सवाल लिखें...',
+    botGreet: "नमस्ते! मैं आपका स्मार्ट कृषि सहायक हूँ 🌿 आज मैं कैसे मदद कर सकता हूँ? फसल, कीट, खाद या फोटो के बारे में पूछें!",
+    alertText: '⚠️ आपके क्षेत्र में माहू (एफिड) का प्रकोप – कीट नियंत्रण टिप्स देखें'
+  },
+  te: {
+    greeting: 'ఈరోజు మీ పంటపై శ్రద్ధ వహించండి',
+    askPlaceholder: 'మీ ప్రశ్న టైప్ చేయండి...',
+    botGreet: "నమస్కారం! నేను మీ స్మార్ట్ వ్యవసాయ సహాయకుడిని 🌿 ఈరోజు నేను మీకు ఎలా సహాయం చేయగలను? పంట, పురుగులు, ఎరువులు గురించి అడగండి!",
+    alertText: '⚠️ మీ ప్రాంతంలో పేను (ఆఫిడ్) సమస్య – తెగుళ్ల నియంత్రణ చూడండి'
+  }
+};
+
+function cycleLang() {
+  const order = ['en', 'hi', 'te'];
+  const labels = { en: 'EN', hi: 'HI', te: 'TE' };
+  const cur = order.indexOf(state.lang);
+  state.lang = order[(cur + 1) % 3];
+  document.getElementById('langLabel').textContent = labels[state.lang];
+  document.getElementById('alertText').textContent = langs[state.lang].alertText;
+  const ci = document.getElementById('chatInput');
+  if (ci) ci.placeholder = langs[state.lang].askPlaceholder;
+  showToast('Language: ' + labels[state.lang]);
+}
+
+function selectLang(l, el) {
+  state.lang = l;
+  el.parentElement.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+//   SCREEN NAVIGATION
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  // nav highlight
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  // special init
+  if (id === 'ask') initChat();
+  if (id === 'stores') initStores();
+  if (id === 'quiz') initQuiz();
+  if (id === 'profile') initProfile();
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────
+//   ONBOARDING
+// ─────────────────────────────────────────────
+function toggleChip(el, group) {
+  const chips = document.querySelectorAll(`#${group}Chips .chip`);
+  chips.forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function saveProfile() {
+  const name = document.getElementById('farmerName').value.trim();
+  const loc = document.getElementById('farmerLoc').value.trim();
+  const land = document.getElementById('landSize').value;
+  const cropEl = document.querySelector('#cropChips .chip.selected');
+  const seasonEl = document.querySelector('#seasonChips .chip.selected');
+
+  if (!name || !loc || !land || !cropEl || !seasonEl) {
+    showToast('Please fill all fields 🙏');
+    return;
+  }
+
+  state.name = name;
+  state.location = loc;
+  state.land = land;
+  state.crop = cropEl.textContent.trim();
+  state.season = seasonEl.textContent.trim();
+
+  // Persist
+  localStorage.setItem('ksProfile', JSON.stringify(state));
+
+  // Show nav + dashboard
+  document.getElementById('bottomNav').style.display = 'flex';
+  document.getElementById('weatherStrip').style.display = 'flex';
+  updateDashboard();
+  showScreen('home');
+  showToast('Welcome, ' + name + '! 🎉');
+}
+
+function updateDashboard() {
+  document.getElementById('greetName').textContent = state.name;
+  document.getElementById('greetSub').textContent = langs[state.lang]?.greeting || langs.en.greeting;
+  document.getElementById('metaLoc').textContent = state.location;
+  document.getElementById('metaCrop').textContent = state.crop;
+  document.getElementById('metaLand').textContent = state.land;
+  document.getElementById('topPoints').textContent = state.points;
+  buildCalendar();
+}
+
+// ─────────────────────────────────────────────
+//   CALENDAR STRIP
+// ─────────────────────────────────────────────
+const calTasks = ['Spray neem', 'Check pests', 'Irrigate', 'Fertilizer', 'Weed', 'Soil test', 'Rest day'];
+function buildCalendar() {
+  const strip = document.getElementById('calendarStrip');
+  strip.innerHTML = '';
+  const today = new Date();
+  for (let i = -1; i <= 5; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const div = document.createElement('div');
+    div.className = 'cal-day' + (i === 0 ? ' today' : '');
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const task = calTasks[(d.getDate() + 3) % calTasks.length];
+    div.innerHTML = `<div class="cd-date">${d.getDate()}</div><div class="cd-day">${days[d.getDay()]}</div><div class="cd-task">${task}</div>`;
+    strip.appendChild(div);
+  }
+}
+
+// ─────────────────────────────────────────────
+//   CHAT / ASK EXPERT
+// ─────────────────────────────────────────────
+const botResponses = {
+  yellow: {
+    key: ['yellow', 'yellowing', 'pale'],
+    ans: `🍃 Yellow leaves can mean several things:\n\n**1. Iron/Zinc deficiency** – Apply micronutrient spray (ZnSO₄ 0.5%)\n**2. Nitrogen deficiency** – Apply Urea (20 kg/acre)\n**3. Waterlogging** – Improve drainage immediately\n**4. Blast disease** – Apply Tricyclazole 75WP\n\nBest to upload a photo for accurate diagnosis! 📸`
+  },
+  pest: {
+    key: ['pest', 'insect', 'bug', 'worm', 'caterpillar'],
+    ans: `🐛 For pest control:\n\n**Organic options:**\n• Neem oil spray (5ml/L water)\n• Pheromone traps @5/acre\n\n**Chemical options:**\n• Chlorpyrifos 20EC @400ml/acre\n• Emamectin 5SG @80g/acre\n\n**When to spray:** Early morning or evening, not in rain. Wear gloves! ⚠️`
+  },
+  water: {
+    key: ['water', 'irrigat', 'moisture', 'dry'],
+    ans: `💧 Irrigation guide for ${state.crop || 'your crop'}:\n\n**This week:** 40% rain forecast → reduce watering by 30%\n\n**General rule:**\n• Sandy soil: water every 3–4 days\n• Clay soil: water every 6–8 days\n• Check soil: push finger 2 inches – if dry, irrigate\n\n**Best time:** Early morning (6–8 AM) to reduce evaporation.`
+  },
+  fertilizer: {
+    key: ['fertilizer', 'fertiliser', 'manure', 'nutrient', 'npk', 'urea'],
+    ans: `🧪 Fertilizer recommendation for ${state.season || 'Kharif'} season:\n\n**NPK ratio:** 120:60:40 kg/ha\n\n**Schedule:**\n• Basal dose: Full P & K + 1/3 N at sowing\n• 30 days: 1/3 N (Urea top dress)\n• 60 days: 1/3 N before flowering\n\n**Organic:** Add 5 tonnes FYM/acre before sowing for best results! 🌱`
+  },
+  harvest: {
+    key: ['harvest', 'when to cut', 'ready'],
+    ans: `🌾 Harvest indicators for ${state.crop || 'your crop'}:\n\n✅ Grain moisture < 22%\n✅ 85–90% grains turn golden/mature color\n✅ Leaves start drying naturally\n✅ Grain at hard-dough stage\n\n**Best time:** Early morning to minimize shattering losses. After harvest, dry to <14% moisture for safe storage.`
+  },
+  default: {
+    ans: `🌿 Thank you for your question! Based on your profile (${state.crop}, ${state.location}), here's my guidance:\n\nFor best results, please share more details about:\n• Which part of plant is affected?\n• How long has this been happening?\n• What did you apply recently?\n\nOr upload a photo for instant disease detection! 📸\n\n_Your question has been noted and will be reviewed by our agronomist team._`
+  }
+};
+
+function initChat() {
+  const body = document.getElementById('chatBody');
+  if (state.chatMessages.length === 0) {
+    // Welcome message
+    addBotMessage(langs[state.lang]?.botGreet || langs.en.botGreet);
+  } else {
+    renderChat();
+  }
+}
+
+function renderChat() {
+  const body = document.getElementById('chatBody');
+  body.innerHTML = '';
+  state.chatMessages.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + m.role;
+    if (m.role === 'bot') {
+      div.innerHTML = `<div class="msg-avatar">🌿</div>${m.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}`;
+    } else {
+      div.textContent = m.text;
+    }
+    body.appendChild(div);
+  });
+  body.scrollTop = body.scrollHeight;
+}
+
+function addBotMessage(text) {
+  const body = document.getElementById('chatBody');
+  // Show typing
+  const typing = document.createElement('div');
+  typing.className = 'msg bot';
+  typing.innerHTML = '<div class="msg-avatar">🌿</div><div class="typing-dots"><span></span><span></span><span></span></div>';
+  body.appendChild(typing);
+  body.scrollTop = body.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+    state.chatMessages.push({ role: 'bot', text });
+    renderChat();
+  }, 1200);
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  state.chatMessages.push({ role: 'user', text });
+  input.value = '';
+  document.getElementById('uploadPreview').classList.remove('show');
+  state.questions++;
+  renderChat();
+  // Find response
+  const lower = text.toLowerCase();
+  let resp = botResponses.default.ans;
+  for (const key in botResponses) {
+    if (botResponses[key].key && botResponses[key].key.some(k => lower.includes(k))) {
+      resp = botResponses[key].ans;
+      break;
+    }
+  }
+  // Add to history
+  state.history.unshift({
+    date: new Date().toLocaleDateString(),
+    q: text,
+    a: resp.substring(0, 80) + '…',
+    status: 'solved'
+  });
+  state.solved++;
+  addBotMessage(resp);
+}
+
+function sendSuggest(text) {
+  document.getElementById('chatInput').value = text;
+  sendMessage();
+}
+
+function handleChatUpload(input) {
+  if (input.files.length > 0) {
+    document.getElementById('uploadPreview').classList.add('show');
+  }
+}
+
+function clearUpload() {
+  document.getElementById('uploadPreview').classList.remove('show');
+}
+
+function voiceInput() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    showToast('Voice not supported on this browser');
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const r = new SR();
+  r.lang = state.lang === 'hi' ? 'hi-IN' : state.lang === 'te' ? 'te-IN' : 'en-IN';
+  r.onresult = e => {
+    document.getElementById('chatInput').value = e.results[0][0].transcript;
+  };
+  r.onerror = () => showToast('Voice error – try again');
+  r.start();
+  showToast('🎤 Listening…');
+}
+
+// ─────────────────────────────────────────────
+//   DISEASE DETECTION
+// ─────────────────────────────────────────────
+const diseases = [
+  { name: 'Leaf Blast', icon: '🍂', conf: '87%', sev: 72,
+    steps: ['Drain excess water from field', 'Apply Tricyclazole 75WP @300g/acre', 'Avoid high nitrogen doses during flowering', 'Spray again after 10 days if needed', 'Collect and burn infected leaves'] },
+  { name: 'Brown Spot', icon: '🟤', conf: '82%', sev: 55,
+    steps: ['Apply Mancozeb 75WP @400g/200L water', 'Ensure proper potassium nutrition (MOP 20kg/acre)', 'Improve field drainage', 'Remove crop debris after harvest'] },
+  { name: 'Bacterial Blight', icon: '💛', conf: '79%', sev: 65,
+    steps: ['Use resistant varieties next season', 'Spray copper oxychloride 50WP @500g/acre', 'Avoid overhead irrigation', 'Reduce nitrogen fertilizer', 'Remove heavily infected plants'] },
+  { name: 'Sheath Blight', icon: '🌿', conf: '84%', sev: 60,
+    steps: ['Apply Hexaconazole 5SC @400ml/acre', 'Reduce plant density in next crop', 'Apply well-decomposed FYM', 'Avoid flood irrigation'] }
+];
+
+function analyzeDisease(input) {
+  if (!input.files.length) return;
+  const zone = document.getElementById('detectUploadZone');
+  const result = document.getElementById('detectedResult');
+  zone.querySelector('.uz-text').textContent = '🔍 Analyzing…';
+  zone.querySelector('.uz-sub').textContent = 'AI processing your image…';
+
+  const d = diseases[Math.floor(Math.random() * diseases.length)];
+  setTimeout(() => {
+    zone.querySelector('.uz-text').textContent = '✅ Analysis Complete';
+    zone.querySelector('.uz-sub').textContent = 'Tap to upload another image';
+    document.getElementById('resIcon').textContent = d.icon;
+    document.getElementById('resName').textContent = d.name + ' Detected';
+    document.getElementById('resConf').textContent = 'Confidence: ' + d.conf + ' | Severity: ' + (d.sev > 65 ? 'High ⚠️' : 'Medium');
+    result.classList.add('show');
+    setTimeout(() => { document.getElementById('sevFill').style.width = d.sev + '%'; }, 200);
+    const stepsEl = document.getElementById('solutionSteps');
+    stepsEl.innerHTML = '<strong>Recommended Treatment:</strong><br><br>';
+    d.steps.forEach((s, i) => {
+      stepsEl.innerHTML += `<div class="step-item"><div class="step-num">${i + 1}</div><div class="step-text">${s}</div></div>`;
+    });
+    state.history.unshift({
+      date: new Date().toLocaleDateString(),
+      q: 'Photo scan: ' + d.name,
+      a: d.steps[0],
+      status: 'solved'
+    });
+    state.solved++;
+    showToast('🔬 Disease identified: ' + d.name);
+  }, 2200);
+}
+
+// ─────────────────────────────────────────────
+//   NEARBY STORES
+// ─────────────────────────────────────────────
+const storesData = [
+  { icon: '🌱', name: 'Shree Agro Center', type: 'Seeds & Fertilizers', dist: '1.2 km', hours: '8 AM – 7 PM', open: true, phone: '9876543210', collab: true },
+  { icon: '🧪', name: 'Rythu Seva Kendra', type: 'Government Agri Store', dist: '2.5 km', hours: '9 AM – 5 PM', open: true, phone: '1800-419-0001', collab: false },
+  { icon: '🚿', name: 'Kisaan Bhandar', type: 'Pesticides & Tools', dist: '3.1 km', hours: '7 AM – 8 PM', open: false, phone: '9988776655', collab: true },
+  { icon: '🔧', name: 'Farm Equipment Hub', type: 'Machinery & Spare Parts', dist: '4.0 km', hours: '8 AM – 6 PM', open: true, phone: '9123456789', collab: false },
+  { icon: '💧', name: 'Drip Masters', type: 'Irrigation Systems', dist: '5.2 km', hours: '9 AM – 6 PM', open: true, phone: '9012345678', collab: true },
+];
+
+function initStores() {
+  document.getElementById('storeLocSub').textContent = 'Near ' + (state.location || 'your location');
+  const list = document.getElementById('storesList');
+  list.innerHTML = '';
+  storesData.forEach(s => {
+    const isOpen = s.open;
+    list.innerHTML += `
+      <div class="store-card">
+        <div class="store-icon-box">${s.icon}</div>
+        <div style="flex:1">
+          <div class="store-name">${s.name} ${s.collab ? '<span style="background:#e8f5d0;color:#2D5016;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:700">Partner</span>' : ''}</div>
+          <div class="store-type">${s.type}</div>
+          <div class="store-dist">📍 ${s.dist} away</div>
+          <div class="store-hours">🕐 ${s.hours} <span class="${isOpen ? 'open-badge' : 'open-badge closed-badge'}">${isOpen ? 'Open' : 'Closed'}</span></div>
+          <div class="call-store-btn">
+            <button class="sm-btn green" onclick="showToast('Calling ${s.name}…')">📞 Call</button>
+            <button class="sm-btn outline" onclick="showToast('Directions to ${s.name}…')">🗺️ Directions</button>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+// ─────────────────────────────────────────────
+//   QUIZ
+// ─────────────────────────────────────────────
+const quizBank = [
+  { q: 'Which crop is called "King of Cereals" in India?', opts: ['Rice', 'Wheat', 'Maize', 'Barley'], ans: 1 },
+  { q: 'What does NPK stand for in fertilizers?', opts: ['Nitrogen Phosphorus Potassium', 'Natural Plant Kinetics', 'Neutral Plant Killer', 'Nitrogen Potash Kelp'], ans: 0 },
+  { q: 'Which method of irrigation is most water-efficient?', opts: ['Flood irrigation', 'Sprinkler irrigation', 'Drip irrigation', 'Canal irrigation'], ans: 2 },
+  { q: 'Which bacteria helps fix atmospheric nitrogen in soil?', opts: ['E. coli', 'Rhizobium', 'Salmonella', 'Lactobacillus'], ans: 1 },
+  { q: 'When is Kharif season in India?', opts: ['Jan–Apr', 'May–Jul', 'Jun–Oct', 'Nov–Feb'], ans: 2 },
+  { q: 'Neem oil is primarily used as a?', opts: ['Fertilizer', 'Herbicide', 'Natural pesticide', 'Soil conditioner'], ans: 2 },
+  { q: 'What pH range is ideal for most crops?', opts: ['4.0–5.5', '6.0–7.5', '8.0–9.0', '9.0–10'], ans: 1 }
+];
+
+function initQuiz() {
+  document.getElementById('bigPoints').textContent = state.points;
+  document.getElementById('qCount').textContent = state.questions;
+  document.getElementById('streak').textContent = state.streak;
+
+  const today = new Date().toDateString();
+  if (state.qAnswered && state.lastQDate === today) {
+    document.getElementById('quizQ').textContent = '✅ You answered today\'s quiz! Come back tomorrow.';
+    document.getElementById('quizOptions').innerHTML = `<div style="color:rgba(255,255,255,.8);font-size:14px;margin-top:8px">Next quiz available at 12:00 AM tomorrow. You earned ${state.lastQPoints} points!</div>`;
+    return;
+  }
+
+  const q = quizBank[Math.floor(Math.random() * quizBank.length)];
+  document.getElementById('quizQ').textContent = q.q;
+  const opts = document.getElementById('quizOptions');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-option';
+    btn.textContent = o;
+    btn.onclick = () => answerQuiz(i, q.ans, btn);
+    opts.appendChild(btn);
+  });
+}
+
+function answerQuiz(chosen, correct, el) {
+  const opts = document.querySelectorAll('.q-option');
+  opts.forEach((o, i) => {
+    o.disabled = true;
+    if (i === correct) o.classList.add('correct');
+    else if (i === chosen && chosen !== correct) o.classList.add('wrong');
+  });
+
+  const pts = chosen === correct ? 10 : 2;
+  state.points += pts;
+  state.questions++;
+  state.qAnswered = true;
+  state.lastQDate = new Date().toDateString();
+  state.lastQPoints = pts;
+  if (chosen === correct) {
+    state.streak++;
+    showToast('🎉 Correct! +' + pts + ' points earned!');
+  } else {
+    showToast('❌ Wrong. +' + pts + ' points for trying!');
+  }
+  document.getElementById('bigPoints').textContent = state.points;
+  document.getElementById('topPoints').textContent = state.points;
+  document.getElementById('streak').textContent = state.streak;
+  document.getElementById('qCount').textContent = state.questions;
+}
+
+function redeemReward(cost, name) {
+  if (state.points < cost) {
+    showToast('Not enough points! Need ' + cost + ' pts');
+    return;
+  }
+  state.points -= cost;
+  document.getElementById('bigPoints').textContent = state.points;
+  document.getElementById('topPoints').textContent = state.points;
+  showToast('🎁 Redeemed: ' + name + '! Check your SMS.');
+}
+
+// ─────────────────────────────────────────────
+//   PROFILE
+// ─────────────────────────────────────────────
+function initProfile() {
+  document.getElementById('profName').textContent = state.name || '–';
+  document.getElementById('profLoc').textContent = '📍 ' + (state.location || '–');
+  document.getElementById('profCrop').textContent = '🌱 ' + (state.crop || '–') + ' · ' + (state.land || '–') + ' · ' + (state.season || '–');
+  document.getElementById('statQuestions').textContent = state.questions;
+  document.getElementById('statSolved').textContent = state.solved;
+  document.getElementById('statPts').textContent = state.points;
+
+  const list = document.getElementById('historyList');
+  if (state.history.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">No history yet. Start asking questions! 🌱</div>';
+    return;
+  }
+  list.innerHTML = '';
+  state.history.slice(0, 8).forEach(h => {
+    list.innerHTML += `
+      <div class="history-item">
+        <div class="hi-date">${h.date} <span class="status-tag ${h.status}">${h.status === 'solved' ? '✅ Solved' : '⏳ Pending'}</span></div>
+        <div class="hi-q">${h.q}</div>
+        <div class="hi-ans">${h.a}</div>
+      </div>`;
+  });
+}
+
+function editProfile() {
+  state.chatMessages = [];
+  showScreen('onboard');
+  document.getElementById('farmerName').value = state.name;
+  document.getElementById('farmerLoc').value = state.location;
+  document.getElementById('landSize').value = state.land;
+}
+
+// ─────────────────────────────────────────────
+//   CALL SUPPORT
+// ─────────────────────────────────────────────
+function callSupport() {
+  const now = new Date().getHours();
+  if (now >= 9 && now < 19) {
+    showToast('📞 Connecting to support team…');
+    setTimeout(() => showToast('Toll-free: 918096493439'), 1500);
+  } else {
+    showToast('⏰ Support available 9 AM – 7 PM only');
+  }
+}
+
+// ─────────────────────────────────────────────
+//   TOAST
+// ─────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─────────────────────────────────────────────
+//   INIT
+// ─────────────────────────────────────────────
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('ksProfile');
+  if (saved) {
+    try {
+      const p = JSON.parse(saved);
+      Object.assign(state, p);
+      document.getElementById('bottomNav').style.display = 'flex';
+      updateDashboard();
+      showScreen('home');
+    } catch (e) {
+      // fresh start
+    }
+  }
+});
+
+/* ---------------- LOGOUT FUNCTION ---------------- */
+function logoutUser() {
+  window.location.href = "/logout";
+}
+
+</script>
+</body>
+</html>

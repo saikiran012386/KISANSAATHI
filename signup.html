@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KisaanSathi - Sign Up</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body{
+  margin:0;
+  background:#F3FAF3;
+  display:flex;
+  justify-content:center;
+  padding:20px;
+}
+
+/* MAIN CONTAINER */
+.container{
+  width:100%;
+  max-width:420px;
+}
+
+/* TOP TABS */
+.tabs{
+  display:flex;
+  background:#DFF0DF;
+  padding:6px;
+  border-radius:30px;
+  margin-bottom:18px;
+}
+
+.tab{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:25px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.tab.login{
+  background:transparent;
+  color:#2E7D32;
+}
+
+.tab.signup{
+  background:#2E7D32;
+  color:white;
+}
+
+/* CARD */
+.card{
+  background:white;
+  padding:22px;
+  border-radius:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+.card h2{
+  margin:0;
+  color:#1F2937;
+}
+
+.subtitle{
+  color:#6B7280;
+  margin-bottom:20px;
+}
+
+/* LABELS */
+label{
+  display:block;
+  margin-top:14px;
+  font-size:14px;
+  font-weight:600;
+  color:#1F2937;
+}
+
+/* INPUTS */
+input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #CDE8CD;
+  background:#EAF6EA;
+  margin-top:6px;
+  font-size:15px;
+  outline:none;
+}
+
+input:focus{
+  border-color:#2E7D32;
+}
+
+/* INFO BOX */
+.info{
+  margin-top:12px;
+  background:#E8F2FF;
+  padding:10px;
+  border-radius:10px;
+  font-size:13px;
+  color:#2563EB;
+}
+
+/* PASSWORD BOX */
+.password-box{
+  position:relative;
+}
+
+.password-box span{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+}
+
+/* BUTTON */
+.btn{
+  margin-top:22px;
+  width:100%;
+  background:#2E7D32;
+  color:white;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.btn:hover{
+  background:#256628;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <a href="/login"><button type="button" class="tab login">🔑 Login</button></a>
+    <button class="tab signup">🌱 Sign Up</button>
+  </div>
+
+  <!-- Signup Card -->
+  <div class="card">
+
+    <h2>🌱 Join KisaanSathi</h2>
+    <p class="subtitle">किसान परिवार का हिस्सा बनें – Register now!</p>
+
+    <!-- 🔥 CONNECTED TO FLASK -->
+    <form action="/" method="POST">
+
+      <label>FULL NAME / पूरा नाम</label>
+      <input type="text" name="name" placeholder="e.g. Mandala Nithin" required>
+
+      <label>MOBILE NUMBER / मोबाइल नंबर</label>
+      <input type="tel" name="mobile" placeholder="+91 00000 00000" required>
+
+      <div class="info">
+        📩 We'll send a one-time OTP to verify your number.
+      </div>
+
+      <label>EMAIL (OPTIONAL)</label>
+      <input type="email" name="email" placeholder="your@email.com">
+
+      <label>PASSWORD / पासवर्ड</label>
+      <div class="password-box">
+        <input type="password" name="password" placeholder="Create a strong password" required>
+        <span>👁️</span>
+      </div>
+
+      <button type="submit" class="btn">Create Account</button>
+
+    </form>
+
+  </div>
+
+</div>
+
+</body>
+</html>
